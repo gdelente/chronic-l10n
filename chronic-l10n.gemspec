@@ -1,4 +1,7 @@
 $:.unshift File.expand_path('../lib', __FILE__)
+
+require 'bundler/setup'
+
 require 'chronic'
 require 'chronic-l10n'
 
