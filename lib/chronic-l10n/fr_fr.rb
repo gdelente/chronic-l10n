@@ -35,44 +35,171 @@ end
 module Chronic
   module L10n
     FR_FR = {
-      :direct_nums => [
-                       ['un', '1']
-                      ],
-      :month_names => {
-        /^janv\.?(ier)?$/ => :january,
-        /^fevr\.?(ier)?$/ => :february,
-        /^mars?$/ => :march,
-        /^avr\.?(il)?$/ => :april,
-        /^mai?$/ => :may,
-        /^juin?$/ => :june,
-        /^juill\.?(et)?$/ => :july,
-        /^aout?$/ => :august,
-        /^sept\.?(embre)?$/ => :september,
-        /^oct\.?(obre)?$/ => :october,
-        /^nov\.?(embre)?$/ => :november,
-        /^dec\.?(embre)?$/ => :december
+      :pointer => {
+        /\bpassad[oa]\b/ => :past,
+        /\b(?:futuro|em|que vem)\b/ => :future,
       },
-      :units => {
-        /^jour?$/ => :day
-      }
+      :ordinal_regex => /^(\d*)[oa]$/,
+      :numerizer => {
+        :and => 'e',
+        :preprocess => [
+          [/ +|([^\d])-([^\d])/, '\1 \2'], # will mutilate hyphenated-words but shouldn't matter for date extraction
+          [/e mei[ao]/, 'meia'] # take the 'a' out so it doesn't turn into a 1, save the half for the end
+        ],
+        :fractional => [
+          [/(\d+)(?: |-)*mei[ao]/i, '\1:30']
+        ],
+        :direct_nums => [
+          ['onze', '11'],
+          ['doze', '12'],
+          ['treze', '13'],
+          ['quartorze', '14'],
+          ['catorze', '14'],
+          ['quinze', '15'],
+          ['dezesseis', '16'],
+          ['dezeseis', '16'],
+          ['dezessete', '17'],
+          ['dezesete', '17'],
+          ['dezoito', '18'],
+          ['dezenove', '19'],
+          ['zero', '0'],
+          ['um', '1'],
+          ['uma', '1'],
+          ['dois', '2'],
+          ['duas', '2'],
+          ['tres', '3'],
+          ['quatro', '4'],  # The weird regex is so that it matches four but not fourty
+          ['cinco', '5'],
+          ['seis', '6'],
+          ['sete', '7'],
+          ['oito', '8'],
+          ['nove', '9'],
+          ['dez(\W|$)', '10\1']
+        ],
+        :ordinals => [
+          ['primeiro', '1'],
+          ['terceiro', '3'],
+          ['quarto', '4'],
+          ['quinto', '5'],
+          ['sexto', '6'],
+          ['setimo', '7'],
+          ['oitavo', '8'],
+          ['nono', '9'],
+          ['decimo', '10']
+        ],
+        :ten_prefixes => [
+          ['vinte', 20],
+          ['trinta', 30],
+          ['quarenta', 40],
+          ['cinquenta', 50],
+          ['cincuenta', 50],
+          ['sessenta', 60],
+          ['setenta', 70],
+          ['oitenta', 80],
+          ['noventa', 90]
+        ],
+        :big_prefixes => [
+          ['cem', 100],
+          ['mil', 1000],
+          ['milhao', 1_000_000],
+          ['bilhao', 1_000_000_000],
+          ['trilhao', 1_000_000_000_000],
+        ],
+      },
+
+      :repeater => {
+        :season_names => {
+          /^primaveras?$/ => :spring,
+          /^ver(ao|oes)$/ => :summer,
+          /^outonos?$/ => :autumn,
+          /^invernos?$/ => :winter
+        },
+        :month_names => {
+          /^jan\.?(eiro)?$/ => :january,
+          /^fev\.?(ereiro)?$/ => :february,
+          /^mar\.?(co)?$/ => :march,
+          /^abr\.?(il)?$/ => :april,
+          /^mai\.?o?$/ => :may,
+          /^jun\.?(ho)?$/ => :june,
+          /^jul\.?(ho)?$/ => :july,
+          /^ago\.?(sto)?$/ => :august,
+          /^set\.?(embro)?$/ => :september,
+          /^out\.?(ubro)?$/ => :october,
+          /^nov\.?(embro)?$/ => :november,
+          /^dez\.?(embro)?$/ => :december
+        },
+        :day_names => {
+          /^seg(unda)?(-feira)?$/ => :monday,
+          /^ter(ca)?(-feira)?$/ => :tuesday,
+          /^qua(rta)?(-feira)?$/ => :wednesday,
+          /^qui(nta)?(-feira)?$/ => :thursday,
+          /^sex(ta)?(-feira)?$/ => :friday,
+          /^sab(ado)?$/ => :saturday,
+          /^dom(ingo)?$/ => :sunday
+        },
+        :day_portions => {
+          /^ams?$/ => :am,
+          /^pms?$/ => :pm,
+          /^(madrugada|manha)s?$/ => :morning,
+          /^tardes?$/ => :afternoon,
+          /^noites?$/ => :evening,
+          /^noites?$/ => :night
+        },
+        :units => {
+          /^anos?$/ => :year,
+          /^estacoes?$/ => :season,
+          /^mes(es)?$/ => :month,
+          /^quinzenas?$/ => :fortnight,
+          /^semanas?$/ => :week,
+          /^fi(m|ns) de semanas?$/ => :weekend,
+          /^dias? ut(il|eis)$/ => :weekday,
+          /^jours?$/ => :day,
+          /^hrs?$/ => :hour,
+          /^horas?$/ => :hour,
+          /^mins?$/ => :minute,
+          /^minutos?$/ => :minute,
+          /^secs?$/ => :second,
+          /^segundos?$/ => :second
+        }
+      },
+
       :pre_normalize => {
         :preprocess => proc {|str| removeaccents(str)},
         :pre_numerize => [
           [/\./, ':'],
           [/['"]/, ''],
           [/(.*),(.*)/, '\2 \1'],
+          [/^segundo /, '2nd '],
+          [/\bsegundo (de|dia|mes|hora|ninuto|segundo)\b/, '2nd \1']
         ],
         :pos_numerize => [
-          [/\baujourd'hui\b/, 'ce jour'],
-          [/\bdemain\b/, 'prochain jour'],
-          [/\bhier\b/, 'il y a un jour'],
+          [/\-(\d{2}:?\d{2})\b/, 'tzminus\1'],
+          [/([\/\-\,\@])/, ' \1 '],
+          [/(?:^|\s)0(\d+:\d+\s*pm?\b)/, ' \1'],
+          [/\baujourdhui\b/, 'ce jour'],
+          [/\bamanha\b/, 'proximo dia'],
+          [/\bhier\b/, 'avant jour'],
+          [/\b(\w+) (?:anterior|passad[ao])\b/, 'ultimo \1'],
+          [/\b(\w+) (?:futuro|que vem)\b/, 'proximo \1'],
+          [/\bmeio[- ]dia\b/, '12:00pm'],
+          [/\bmeia[- ]noite\b/, '24:00'],
+          [/\bagora\b/, 'este segundo'],
+          [/\b(?:da|de) (madrugada|manha)\b/, '\1'],
+          [/\b(?:da|de|a) (tarde|noite)\b/, '\1'],
+          [/\bhoje a noite\b/, 'esta noite'],
+          [/\b\d+:?\d*[ap]\b/,'\0m'],
+          [/(\d)([ap]m)\b/, '\1 \2'],
+          [/(\d)(?:h|em ponto)\b/, '\1:00'],
+          [/\b(?:daqui a|daqui|depois)\b/, 'futuro'],
+          [/\b(?:antes|atras)\b/, 'passado'],
+          [/\b(\d+) de (\w+)\b/, '\2 \1']
         ]
       },
 
       :grabber => {
-        /il y a/ => :last,
+        /avant/ => :last,
         /ce/ => :this,
-        /prochain/ => :next
+        /proxim[ao]/ => :next
       },
 
       :token => {
