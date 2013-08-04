@@ -1,8 +1,9 @@
 $:.unshift File.expand_path('../lib', __FILE__)
+require "chronic-l10n/version"
 
 Gem::Specification.new do |s|
   s.name = 'chronic-l10n'
-  s.version = '0.1.0.rc' #Chronic::L10n::VERSION
+  s.version = Chronic::L10n::VERSION
   s.summary     = 'Localization for Chronic.'
   s.description = 'Pack of locales for localizing Chronics date parsing.'
   s.authors  = ['Luan Santos']
