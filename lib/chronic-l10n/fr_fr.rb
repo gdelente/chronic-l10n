@@ -115,18 +115,18 @@ module Chronic
           /^invernos?$/ => :winter
         },
         :month_names => {
-          /^jan\.?(eiro)?$/ => :january,
-          /^fev\.?(ereiro)?$/ => :february,
-          /^mar\.?(co)?$/ => :march,
-          /^abr\.?(il)?$/ => :april,
-          /^mai\.?o?$/ => :may,
-          /^jun\.?(ho)?$/ => :june,
-          /^jul\.?(ho)?$/ => :july,
-          /^ago\.?(sto)?$/ => :august,
-          /^set\.?(embro)?$/ => :september,
-          /^out\.?(ubro)?$/ => :october,
-          /^nov\.?(embro)?$/ => :november,
-          /^dez\.?(embro)?$/ => :december
+          /^janv\.?(ier)?$/ => :january,
+          /^fevr\.?(ier)?$/ => :february,
+          /^mars$/ => :march,
+          /^avr\.?(il)?$/ => :april,
+          /^mai$/ => :may,
+          /^juin$/ => :june,
+          /^juill\.?(et)?$/ => :july,
+          /^aout$/ => :august,
+          /^sept\.?(embre)?$/ => :september,
+          /^oct\.?(obre)?$/ => :october,
+          /^nov\.?(embre)?$/ => :november,
+          /^dec\.?(embre)?$/ => :december
         },
         :day_names => {
           /^seg(unda)?(-feira)?$/ => :monday,
